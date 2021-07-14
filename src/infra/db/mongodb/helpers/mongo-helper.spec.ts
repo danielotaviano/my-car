@@ -15,14 +15,14 @@ describe('MongoHelper', () => {
   })
 
   test('Should reconnect if mongodb is down', async () => {
-    let accountCollection = await sut.getCollection('accounts')
+    let carCollection = await sut.getCollection('cars')
 
-    expect(accountCollection).toBeTruthy()
+    expect(carCollection).toBeTruthy()
 
     await sut.disconnect()
 
-    accountCollection = await sut.getCollection('accounts')
+    carCollection = await sut.getCollection('cars')
 
-    expect(accountCollection).toBeTruthy()
+    expect(carCollection).toBeTruthy()
   })
 })

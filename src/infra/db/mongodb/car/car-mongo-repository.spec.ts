@@ -23,7 +23,7 @@ const makeSut = (): CarMongoRepository => {
   return new CarMongoRepository()
 }
 
-describe('Account Mongo Repository', () => {
+describe('Car Mongo Repository', () => {
   let mongod: MongoMemoryServer
 
   beforeAll(async () => {

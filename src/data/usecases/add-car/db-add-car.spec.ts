@@ -33,13 +33,13 @@ const makeFakeCar = () => {
 }
 
 const makeAddCarRepository = (): AddCarRepository => {
-  class AddAccountRepositoryStub implements AddCarRepository {
-    async add(account: AddCarModel): Promise<CarModel> {
+  class AddCarRepositoryStub implements AddCarRepository {
+    async add(car: AddCarModel): Promise<CarModel> {
       const fakeCar = makeFakeCarWithId()
       return new Promise(resolve => resolve(fakeCar))
     }
   }
-  return new AddAccountRepositoryStub()
+  return new AddCarRepositoryStub()
 }
 
 type SutTypes = {
