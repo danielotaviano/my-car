@@ -1,7 +1,8 @@
 import { CarModel } from '@/domain/models/car'
 import { AddCar, AddCarModel } from '@/domain/usecases/car'
+import { MissingParamError } from '@/presentation/errors/missing-param-error'
 import { ServerError } from '@/presentation/errors/server-error'
-import { ok } from '@/presentation/helpers/http/http.helper'
+import { badRequest, ok } from '@/presentation/helpers/http/http.helper'
 import { Validation } from '@/presentation/protocols/validation'
 import { AddCarController } from './add-car-controller'
 
@@ -129,5 +130,17 @@ describe('AddCar Controller', () => {
     }
     await sut.handle(httpRequest)
     expect(validateSpy).toBeCalledWith(makeFakeCar())
+  })
+
+  test('should return 400 if Validation returns an error', async () => {
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(
+      new MissingParamError('any_field')
+    )
+    const httpRequest = {
+      body: makeFakeCar()
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')))
   })
 })
