@@ -1,5 +1,6 @@
 import { CarModel } from '@/domain/models/car'
 import { AddCar, AddCarModel } from '@/domain/usecases/car'
+import { ServerError } from '@/presentation/errors/server-error'
 import { AddCarController } from './add-car-controller'
 
 const makeAddCar = () => {
@@ -56,5 +57,27 @@ describe('AddCar Controller', () => {
     await sut.handle(httpRequest)
 
     expect(addSpy).toBeCalledWith(httpRequest.body)
+  })
+
+  test('Should return 500 if AddAccount throws', async () => {
+    const { sut, addCarStub } = makeSut()
+    jest.spyOn(addCarStub, 'add').mockImplementationOnce(async () => {
+      return new Promise((resolve, reject) => reject(new Error()))
+    })
+
+    const httpRequest = {
+      body: {
+        brand: 'any_brand',
+        model: 'any_model',
+        version: 'any_version',
+        year: 2000,
+        mileage: 10000,
+        gearbox: 'valid_gear_box',
+        price: 50000
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError(null))
   })
 })
