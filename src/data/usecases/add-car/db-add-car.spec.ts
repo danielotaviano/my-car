@@ -55,4 +55,24 @@ describe('DbAddCar UseCase', () => {
     await sut.add(carData)
     expect(addSpy).toHaveBeenCalledWith(carData)
   })
+  test('should throw if AddCarRepository throws', async () => {
+    const { sut, addCarRepositoryStub } = makeSut()
+
+    jest.spyOn(addCarRepositoryStub, 'add').mockReturnValueOnce(
+      new Promise((resolve, reject) =>
+        reject(new Error()))
+    )
+    const carData = {
+      brand: 'any_brand',
+      model: 'any_model',
+      version: 'any_version',
+      year: 2000,
+      mileage: 10000,
+      gearbox: 'valid_gear_box',
+      price: 50000
+    }
+
+    const promise = sut.add(carData)
+    await expect(promise).rejects.toThrow()
+  })
 })
