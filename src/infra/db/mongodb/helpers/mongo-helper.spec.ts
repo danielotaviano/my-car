@@ -2,10 +2,11 @@ import { MongoMemoryServer } from 'mongodb-memory-server'
 import { MongoHelper as sut } from './mongo-helper'
 
 describe('MongoHelper', () => {
-  const mongod = new MongoMemoryServer()
+  let mongod: MongoMemoryServer
 
   beforeAll(async () => {
-    const uri = await mongod.getUri()
+    mongod = await MongoMemoryServer.create()
+    const uri = mongod.getUri()
     await sut.connect(uri)
   })
   afterAll(async () => {
