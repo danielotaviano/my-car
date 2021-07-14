@@ -1,0 +1,8 @@
+node_modules
+dist
+coverage
+arch.png
+yarn.lock
+.env
+data
+!src/data
