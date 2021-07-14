@@ -62,15 +62,7 @@ describe('DbAddCar UseCase', () => {
     const { sut, addCarRepositoryStub } = makeSut()
 
     const addSpy = jest.spyOn(addCarRepositoryStub, 'add')
-    const carData = {
-      brand: 'any_brand',
-      model: 'any_model',
-      version: 'any_version',
-      year: 2000,
-      mileage: 10000,
-      gearbox: 'valid_gear_box',
-      price: 50000
-    }
+    const carData = makeFakeCar()
 
     await sut.add(carData)
     expect(addSpy).toHaveBeenCalledWith(carData)

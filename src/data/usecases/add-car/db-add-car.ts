@@ -8,8 +8,7 @@ export class DbAddCar implements AddCar {
   ) {}
 
   async add(carData: AddCarModel):Promise<CarModel> {
-    await this.addCarRepository.add(carData)
-
-    return null
+    const car = await this.addCarRepository.add(carData)
+    return car
   }
 }
