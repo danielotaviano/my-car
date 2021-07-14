@@ -5,6 +5,6 @@ export type CarModel = {
   version: string
   year: number
   mileage: number
-  gearbox: 'manual' | 'automatic'
+  gearbox: string
   price: number
 }

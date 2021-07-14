@@ -6,7 +6,7 @@ export type AddCarModel = {
   version: string
   year: number
   mileage: number
-  gearbox: 'manual' | 'automatic'
+  gearbox: string
   price: number
 }
 
