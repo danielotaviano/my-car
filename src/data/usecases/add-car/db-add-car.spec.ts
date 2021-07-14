@@ -3,19 +3,39 @@ import { CarModel } from '@/domain/models/car'
 import { AddCarModel } from '@/domain/usecases/car'
 import { DbAddCar } from './db-add-car'
 
+const makeFakeCarWithId = () => {
+  const fakeCar = {
+    id: 'valid_id',
+    brand: 'any_brand',
+    model: 'any_model',
+    version: 'any_version',
+    year: 2000,
+    mileage: 10000,
+    gearbox: 'valid_gear_box',
+    price: 50000
+  }
+
+  return fakeCar
+}
+
+const makeFakeCar = () => {
+  const fakeCar = {
+    brand: 'any_brand',
+    model: 'any_model',
+    version: 'any_version',
+    year: 2000,
+    mileage: 10000,
+    gearbox: 'valid_gear_box',
+    price: 50000
+  }
+
+  return fakeCar
+}
+
 const makeAddCarRepository = (): AddCarRepository => {
   class AddAccountRepositoryStub implements AddCarRepository {
     async add(account: AddCarModel): Promise<CarModel> {
-      const fakeCar = {
-        id: 'valid_id',
-        brand: 'any_brand',
-        model: 'any_model',
-        version: 'any_version',
-        year: 2000,
-        mileage: 10000,
-        gearbox: 'valid_gear_box',
-        price: 50000
-      }
+      const fakeCar = makeFakeCarWithId()
       return new Promise(resolve => resolve(fakeCar))
     }
   }
@@ -74,5 +94,12 @@ describe('DbAddCar UseCase', () => {
 
     const promise = sut.add(carData)
     await expect(promise).rejects.toThrow()
+  })
+  test('should return a car on success', async () => {
+    const { sut } = makeSut()
+    const carData = makeFakeCar()
+
+    const car = await sut.add(carData)
+    expect(car).toEqual(makeFakeCarWithId())
   })
 })
