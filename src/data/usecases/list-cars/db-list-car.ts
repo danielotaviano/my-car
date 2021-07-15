@@ -8,7 +8,7 @@ export class DbListCar implements ListCars {
   ) {}
 
   async list(filters: ListCarModel):Promise<CarModel[]> {
-    await this.listCarRepository.list(filters)
-    return null
+    const cars = await this.listCarRepository.list(filters)
+    return cars
   }
 }
