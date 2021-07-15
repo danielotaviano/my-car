@@ -73,6 +73,15 @@ describe('DbDeleteCar UseCase', () => {
     await sut.delete(carId)
     expect(getSpy).toBeCalledWith(carId)
   })
+  test('should throw if GetCarRepository throws', async () => {
+    const { sut, getCarRepositoryStub } = makeSut()
+
+    jest.spyOn(getCarRepositoryStub, 'get').mockRejectedValueOnce(new Error())
+    const carData = 'any_id'
+
+    const promise = sut.delete(carData)
+    await expect(promise).rejects.toThrow()
+  })
   test('should call DeleteCarRepository with correct values', async () => {
     const { sut, deleteCarRepositoryStub } = makeSut()
 
