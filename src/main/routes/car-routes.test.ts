@@ -18,6 +18,16 @@ const makeFakeCar = () => ({
   price: 50000
 })
 
+const makeFakeWrongCar = () => ({
+  brand: 'any_brand',
+  model: 1200,
+  version: 'any_version',
+  year: '2000',
+  mileage: true,
+  gearbox: 'valid_gear_box',
+  price: 50000
+})
+
 describe('AddCar Routes', () => {
   let mongod: MongoMemoryServer
 
@@ -55,6 +65,13 @@ describe('AddCar Routes', () => {
           expect(res.body.gearbox).toEqual('valid_gear_box')
           expect(res.body.price).toEqual(50000)
         })
+    })
+
+    test('Should return 400 if wrong types of fields are provided', async () => {
+      await request(app)
+        .post('/api/car')
+        .send(makeFakeWrongCar())
+        .expect(400)
     })
   })
 })
