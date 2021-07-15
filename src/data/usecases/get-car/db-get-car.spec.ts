@@ -61,4 +61,14 @@ describe('DbGetCar UseCase', () => {
     const promise = sut.get(carData)
     await expect(promise).rejects.toThrow()
   })
+
+  test('should return null if GetCarRepository if any car exists with id', async () => {
+    const { sut, getCarRepositoryStub } = makeSut()
+
+    jest.spyOn(getCarRepositoryStub, 'get').mockReturnValue(null)
+    const carData = 'any_id'
+
+    const car = await sut.get(carData)
+    expect(car).toBeNull()
+  })
 })
