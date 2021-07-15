@@ -9,6 +9,17 @@ export type AddCarModel = {
   gearbox: string
   price: number
 }
+export type ListCarModel = {
+  brand: string
+  model: string
+  version: string
+  minYear: number
+  maxYear: number
+  mileage: number
+  gearbox: string
+  minPrice: number
+  maxPrice: number
+}
 
 export type UpdateCarModel = Partial<AddCarModel>
 
@@ -17,7 +28,7 @@ export interface AddCar {
 }
 
 export interface ListCars {
-  list(): Promise<CarModel[]>
+  list(filters: ListCarModel): Promise<CarModel[]>
 }
 
 export interface GetCar {
