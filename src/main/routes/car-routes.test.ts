@@ -1,6 +1,6 @@
 
 /* eslint-disable jest/expect-expect */
-import { Collection } from 'mongodb'
+import { Collection, ObjectId } from 'mongodb'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import request from 'supertest'
 import app from '../config/app'
@@ -26,6 +26,17 @@ const makeFakeWrongCar = () => ({
   mileage: true,
   gearbox: 'valid_gear_box',
   price: 50000
+})
+
+const makeFakeWrongCarWithInvalidFields = () => ({
+  brand: 'any_brand',
+  model: 'any_model',
+  version: 'any_version',
+  year: 2000,
+  mileage: 10000,
+  gearbox: 'valid_gear_box',
+  price: 50000,
+  any_field_wrong: 'any_value'
 })
 
 describe('AddCar Routes', () => {
@@ -71,6 +82,43 @@ describe('AddCar Routes', () => {
       await request(app)
         .post('/api/car')
         .send(makeFakeWrongCar())
+        .expect(400)
+    })
+  })
+
+  describe('PUT /car', () => {
+    test('Should return 204 on success', async () => {
+      const carCollection = await MongoHelper.getCollection('cars')
+      const result = await carCollection.insertOne(makeFakeCar())
+      const id = result.ops[0]._id
+      await request(app)
+        .put(`/api/car/${id}`)
+        .send({ brand: 'newBrand' })
+        .expect(204)
+
+      const nextResult = await carCollection.findOne({ _id: new ObjectId(id) })
+
+      expect(nextResult.brand).toEqual('newBrand')
+      expect(nextResult.version).toEqual(makeFakeCar().version)
+    })
+
+    test('Should return 400 if wrong types of fields are provided', async () => {
+      const carCollection = await MongoHelper.getCollection('cars')
+      const result = await carCollection.insertOne(makeFakeCar())
+      const id = result.ops[0]._id
+      await request(app)
+        .put(`/api/car/${id}`)
+        .send(makeFakeWrongCar())
+        .expect(400)
+    })
+
+    test('Should return 400 if invalid types of fields are provided', async () => {
+      const carCollection = await MongoHelper.getCollection('cars')
+      const result = await carCollection.insertOne(makeFakeCar())
+      const id = result.ops[0]._id
+      await request(app)
+        .put(`/api/car/${id}`)
+        .send(makeFakeWrongCarWithInvalidFields())
         .expect(400)
     })
   })
