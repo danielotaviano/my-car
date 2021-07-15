@@ -1,7 +1,8 @@
 import { CarModel } from '@/domain/models/car'
 import { GetCar } from '@/domain/usecases/car'
+import { NotFoundError } from '@/presentation/errors/not-found-error'
 import { ServerError } from '@/presentation/errors/server-error'
-import { ok } from '@/presentation/helpers/http/http.helper'
+import { notFound, ok } from '@/presentation/helpers/http/http.helper'
 import { GetCarController } from './get-car-controller'
 
 const makeFakeCarWithId = () => {
@@ -85,5 +86,17 @@ describe('AddCar Controller', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse).toEqual(ok(makeFakeCarWithId()))
+  })
+  test('should return 404 if GetCar return null', async () => {
+    const { sut, getCarStub } = makeSut()
+    jest.spyOn(getCarStub, 'get').mockReturnValueOnce(null)
+    const httpRequest = {
+      params: {
+        id: 'any_id'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(404)
+    expect(httpResponse).toEqual(notFound(new NotFoundError('car not found')))
   })
 })

@@ -1,5 +1,5 @@
 import { MongoMemoryServer } from 'mongodb-memory-server'
-import { MongoHelper as sut } from './mongo-helper'
+import { MongoHelper, MongoHelper as sut } from './mongo-helper'
 
 describe('MongoHelper', () => {
   let mongod: MongoMemoryServer
@@ -24,5 +24,12 @@ describe('MongoHelper', () => {
     carCollection = await sut.getCollection('cars')
 
     expect(carCollection).toBeTruthy()
+  })
+
+  test('Should return when use map with falsy value', async () => {
+    const result = null
+
+    const collection = MongoHelper.map(result)
+    expect(collection).toBeFalsy()
   })
 })

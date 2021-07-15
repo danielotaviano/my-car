@@ -1,6 +1,7 @@
 import { DeleteCar } from '@/domain/usecases/car'
+import { NotFoundError } from '@/presentation/errors/not-found-error'
 import { ServerError } from '@/presentation/errors/server-error'
-import { noContent } from '@/presentation/helpers/http/http.helper'
+import { noContent, notFound } from '@/presentation/helpers/http/http.helper'
 import { DeleteCarController } from './delete-car-controller'
 
 const makeDeleteCar = () => {
@@ -69,5 +70,18 @@ describe('AddCar Controller', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(204)
     expect(httpResponse).toEqual(noContent())
+  })
+
+  test('should return 404 if DeleteCar return null', async () => {
+    const { sut, deleteCarStub } = makeSut()
+    jest.spyOn(deleteCarStub, 'delete').mockReturnValueOnce(null)
+    const httpRequest = {
+      params: {
+        id: 'any_id'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(404)
+    expect(httpResponse).toEqual(notFound(new NotFoundError('car not found')))
   })
 })

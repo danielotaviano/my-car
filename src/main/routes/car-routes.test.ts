@@ -17,6 +17,14 @@ const makeFakeCar = () => ({
   gearbox: 'valid_gear_box',
   price: 50000
 })
+const makeFakeCarWithouAnyField = () => ({
+  brand: 'any_brand',
+  model: 'any_model',
+  version: 'any_version',
+  year: 2000,
+  mileage: 10000,
+  gearbox: 'valid_gear_box'
+})
 
 const makeFakeWrongCar = () => ({
   brand: 'any_brand',
@@ -39,7 +47,7 @@ const makeFakeWrongCarWithInvalidFields = () => ({
   any_field_wrong: 'any_value'
 })
 
-describe('AddCar Routes', () => {
+describe('Car Routes', () => {
   let mongod: MongoMemoryServer
 
   beforeAll(async () => {
@@ -82,6 +90,19 @@ describe('AddCar Routes', () => {
       await request(app)
         .post('/api/car')
         .send(makeFakeWrongCar())
+        .expect(400)
+    })
+
+    test('Should return 400 if invalid fields are provided', async () => {
+      await request(app)
+        .post('/api/car')
+        .send(makeFakeWrongCarWithInvalidFields())
+        .expect(400)
+    })
+    test('Should return 400 if miss any required field', async () => {
+      await request(app)
+        .post('/api/car')
+        .send(makeFakeCarWithouAnyField())
         .expect(400)
     })
   })
