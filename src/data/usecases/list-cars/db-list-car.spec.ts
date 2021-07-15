@@ -67,4 +67,16 @@ describe('DbListCar UseCase', () => {
     const promise = sut.list(carData)
     await expect(promise).rejects.toThrow()
   })
+  test('should return a cars on success', async () => {
+    const { sut } = makeSut()
+
+    const carData = makeFakeFilters()
+
+    const cars = await sut.list(carData)
+    expect(cars).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining(makeFakeCarWithId())
+      ])
+    )
+  })
 })
