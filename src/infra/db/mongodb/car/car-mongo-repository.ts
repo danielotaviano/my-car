@@ -27,7 +27,9 @@ implements
   }
 
   async get(carId: string): Promise<CarModel> {
-    return null
+    const carCollection: Collection<AddCarModel> = await MongoHelper.getCollection('cars')
+    const result = await carCollection.findOne({ _id: carId })
+    return result ? MongoHelper.map(result) : null
   }
 
   async list(filters: ListCarModel): Promise<CarModel[]> {
