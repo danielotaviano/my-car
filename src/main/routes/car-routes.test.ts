@@ -175,4 +175,34 @@ describe('AddCar Routes', () => {
         })
     })
   })
+  describe('DELETE /car/:id', () => {
+    test('Should return 200 on success', async () => {
+      const carCollection = await MongoHelper.getCollection('cars')
+      const result = await carCollection.insertOne(makeFakeCar())
+      const car = MongoHelper.map(result.ops[0])
+
+      const findCar = await carCollection.findOne({ _id: car.id })
+      expect(findCar).toBeTruthy()
+
+      await request(app)
+        .delete(`/api/car/${car.id}`)
+        .expect(204)
+
+      const findCarAfterDelete = await carCollection.findOne({ _id: car.id })
+      expect(findCarAfterDelete).toBeFalsy()
+    })
+
+    test('Should return a filtered car', async () => {
+      const carCollection = await MongoHelper.getCollection('cars')
+      await carCollection.insertOne(makeFakeCar())
+      await carCollection.insertOne(Object.assign(makeFakeCar(), { brand: 'marca' }))
+      await request(app)
+        .get('/api/car?brand=marca')
+        .expect(200)
+        .expect(res => {
+          expect(res.body).toHaveLength(1)
+          expect(res.body[0].brand).toEqual('marca')
+        })
+    })
+  })
 })

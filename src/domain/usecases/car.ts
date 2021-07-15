@@ -38,5 +38,5 @@ export interface UpdateCar {
   update(carId: string, carData: UpdateCarModel): Promise<boolean>
 }
 export interface DeleteCar {
-  delete(carId: string): Promise<void>
+  delete(carId: string): Promise<boolean>
 }

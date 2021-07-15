@@ -8,10 +8,11 @@ export class DbDeleteCar implements DeleteCar {
     private readonly getCarRepository: GetCarRepository
   ) {}
 
-  async delete(carId: string):Promise<void> {
+  async delete(carId: string):Promise<boolean> {
     const isExists = await this.getCarRepository.get(carId)
     if (!isExists) return null
 
     await this.deleteCarRepository.delete(carId)
+    return true
   }
 }
