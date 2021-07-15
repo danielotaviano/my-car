@@ -72,4 +72,21 @@ describe('Car Mongo Repository', () => {
       expect(nextResult).toBeFalsy()
     })
   })
+
+  describe('update()', () => {
+    test('should return a car on add success', async () => {
+      const sut = makeSut()
+      const fakeCar = makeFakeCar()
+      const car = await sut.add(fakeCar)
+
+      expect(car.model).toEqual(fakeCar.model)
+
+      await sut.update(car.id, { model: 'newModel' })
+
+      const updated = await carCollection.findOne({ _id: car.id })
+
+      expect(updated.model).toEqual('newModel')
+      expect(updated.year).toEqual(car.year)
+    })
+  })
 })

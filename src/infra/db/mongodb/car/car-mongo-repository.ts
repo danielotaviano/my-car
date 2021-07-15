@@ -34,7 +34,8 @@ implements
     return null
   }
 
-  update(carId: string, carData: UpdateCarModel): Promise<CarModel> {
-    return null
+  async update(carId: string, carData: UpdateCarModel): Promise<void> {
+    const carCollection: Collection<AddCarModel> = await MongoHelper.getCollection('cars')
+    await carCollection.updateOne({ _id: carId }, { $set: carData })
   }
 }
