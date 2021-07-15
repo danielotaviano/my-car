@@ -1,9 +1,12 @@
+/* eslint-disable jest/expect-expect */
+
+import { CarModel } from '@/domain/models/car'
 import { Collection } from 'mongodb'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import { MongoHelper } from '../helpers/mongo-helper'
 import { CarMongoRepository } from './car-mongo-repository'
 
-let carCollection: Collection
+let carCollection: Collection<CarModel>
 
 const makeFakeCar = () => {
   const fakeCar = {
@@ -48,15 +51,25 @@ describe('Car Mongo Repository', () => {
       const fakeCar = makeFakeCar()
       const car = await sut.add(fakeCar)
 
-      expect(car).toBeTruthy()
-      expect(car.id).toBeTruthy()
-      expect(car.brand).toBe(fakeCar.brand)
-      expect(car.gearbox).toBe(fakeCar.gearbox)
-      expect(car.mileage).toBe(fakeCar.mileage)
-      expect(car.model).toBe(fakeCar.model)
-      expect(car.price).toBe(fakeCar.price)
-      expect(car.version).toBe(fakeCar.version)
-      expect(car.year).toBe(fakeCar.year)
+      const isExists = await carCollection.findOne({ _id: car.id })
+
+      expect(isExists).toBeTruthy()
+    })
+  })
+  describe('delete()', () => {
+    test('should delete a car on success', async () => {
+      const sut = makeSut()
+      const fakeCar = makeFakeCar()
+      const car = await sut.add(fakeCar)
+
+      const result = await carCollection.findOne({ _id: car.id })
+
+      expect(result).toBeTruthy()
+
+      await sut.delete(car.id)
+
+      const nextResult = await carCollection.findOne({ _id: car.id })
+      expect(nextResult).toBeFalsy()
     })
   })
 })
