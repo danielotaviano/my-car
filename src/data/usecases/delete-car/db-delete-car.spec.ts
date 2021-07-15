@@ -65,6 +65,14 @@ describe('DbDeleteCar UseCase', () => {
     const cars = await sut.delete(carId)
     expect(cars).toBeNull()
   })
+  test('should call GetCarRepository with correct values', async () => {
+    const { sut, getCarRepositoryStub } = makeSut()
+
+    const getSpy = jest.spyOn(getCarRepositoryStub, 'get')
+    const carId = 'any_id'
+    await sut.delete(carId)
+    expect(getSpy).toBeCalledWith(carId)
+  })
   test('should call DeleteCarRepository with correct values', async () => {
     const { sut, deleteCarRepositoryStub } = makeSut()
 
