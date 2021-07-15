@@ -6,7 +6,7 @@ import request from 'supertest'
 import app from '../config/app'
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
 
-let accountCollection: Collection
+let carCollection: Collection
 
 const makeFakeCar = () => ({
   brand: 'any_brand',
@@ -34,8 +34,8 @@ describe('AddCar Routes', () => {
   })
 
   beforeEach(async () => {
-    accountCollection = await MongoHelper.getCollection('cars')
-    await accountCollection.deleteMany({})
+    carCollection = await MongoHelper.getCollection('cars')
+    await carCollection.deleteMany({})
   })
 
   describe('POST /car', () => {
