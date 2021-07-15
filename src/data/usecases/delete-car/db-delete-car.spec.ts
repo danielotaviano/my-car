@@ -1,4 +1,5 @@
 import { DeleteCarRepository } from '@/data/protocols/db/delete-car-repository'
+import { GetCarRepository } from '@/data/protocols/db/get-car-repository'
 import { CarModel } from '@/domain/models/car'
 import { DbDeleteCar } from './db-delete-car'
 
@@ -17,6 +18,16 @@ const makeFakeCarWithId = () => {
   return fakeCar
 }
 
+const makeGetCarRepository = (): GetCarRepository => {
+  class GetCarRepositoryStub implements GetCarRepository {
+    async get(id: string): Promise<CarModel> {
+      const fakeCar = makeFakeCarWithId()
+      return new Promise(resolve => resolve(fakeCar))
+    }
+  }
+  return new GetCarRepositoryStub()
+}
+
 const makeDeleteCarRepository = (): DeleteCarRepository => {
   class DeleteCarRepositoryStub implements DeleteCarRepository {
     async delete(id: string): Promise<CarModel> {
@@ -29,20 +40,31 @@ const makeDeleteCarRepository = (): DeleteCarRepository => {
 
 type SutTypes = {
   sut: DbDeleteCar
-  deleteCarRepositoryStub: DeleteCarRepository
+  deleteCarRepositoryStub: DeleteCarRepository,
+  getCarRepositoryStub: GetCarRepository
 }
 
 const makeSut = (): SutTypes => {
+  const getCarRepositoryStub = makeGetCarRepository()
   const deleteCarRepositoryStub = makeDeleteCarRepository()
-  const sut = new DbDeleteCar(deleteCarRepositoryStub)
+  const sut = new DbDeleteCar(deleteCarRepositoryStub, getCarRepositoryStub)
 
   return {
     sut,
-    deleteCarRepositoryStub
+    deleteCarRepositoryStub,
+    getCarRepositoryStub
   }
 }
 
 describe('DbDeleteCar UseCase', () => {
+  test('should return null if GetCarRepository returns null', async () => {
+    const { sut, getCarRepositoryStub } = makeSut()
+
+    jest.spyOn(getCarRepositoryStub, 'get').mockReturnValueOnce(null)
+    const carId = 'any_id'
+    const cars = await sut.delete(carId)
+    expect(cars).toBeNull()
+  })
   test('should call DeleteCarRepository with correct values', async () => {
     const { sut, deleteCarRepositoryStub } = makeSut()
 
