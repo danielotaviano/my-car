@@ -35,35 +35,42 @@ implements
   async list(filters?: ListCarModel): Promise<CarModel[]> {
     const carCollection: Collection<CarModel> = await MongoHelper.getCollection('cars')
 
-    const query: any = {}
+    const selectedFilters = Object.keys(filters || {})
+    const makeQuery = (filters: ListCarModel) => {
+      const filtersMap = {
+        default: 'default',
+        mileage: 'toEqual',
+        minYear: 'gte',
+        maxYear: 'lte',
+        minPrice: 'gte',
+        maxPrice: 'lte'
+      }
 
-    if (filters?.brand) {
-      query.brand = { $regex: filters.brand, $options: 'i' }
+      const filtersMapToField = {
+        minYear: 'year',
+        maxYear: 'year',
+        minPrice: 'price',
+        maxPrice: 'price'
+      }
+
+      const filtersHelper = {
+        default: (value: string) => ({ $regex: value, $options: 'i' }),
+        toEqual: (value: string) => ({ $eq: value }),
+        lte: (value: string) => ({ $lte: value }),
+        gte: (value: string) => ({ $gte: value })
+      }
+
+      return selectedFilters.reduce((agg, crr) => {
+        const type = filtersMap[crr] || filtersMap.default
+        const field = filtersMapToField[crr] || crr
+        agg[field] = Object.assign(
+          { ...agg[field] }, filtersHelper[type](filters[crr])
+        )
+        return agg
+      }, {})
     }
 
-    if (filters?.gearbox) {
-      query.gearbox = { $regex: filters.gearbox, $options: 'i' }
-    }
-
-    if (filters?.mileage) {
-      query.mileage = filters?.mileage
-    }
-
-    if (filters?.model) {
-      query.model = { $regex: filters.model, $options: 'i' }
-    }
-
-    if (filters?.version) {
-      query.version = { $regex: filters.version, $options: 'i' }
-    }
-
-    if (filters?.minPrice) query.price = { $gte: filters?.minPrice }
-    if (filters?.maxPrice) query.price = { ...query.price, $lte: filters?.maxPrice }
-
-    if (filters?.minYear) query.year = { $gte: filters?.minYear }
-    if (filters?.maxYear) query.year = { ...query.year, $lte: filters?.maxYear }
-
-    const result = await carCollection.find(query).toArray()
+    const result = await carCollection.find(makeQuery(filters)).toArray()
     const mappedResult = result.map(car => MongoHelper.map(car))
     return mappedResult
   }

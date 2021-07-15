@@ -133,7 +133,7 @@ describe('Car Mongo Repository', () => {
       })
       await carCollection.insertMany([makeFakeCar2(), makeFakeCar1()])
 
-      const cars = await sut.list({})
+      const cars = await sut.list()
       expect(cars).toEqual(expect.arrayContaining(
         [expect.objectContaining(makeFakeCar1()), expect.objectContaining(makeFakeCar2())]
       ))
