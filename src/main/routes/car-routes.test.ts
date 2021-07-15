@@ -134,5 +134,18 @@ describe('AddCar Routes', () => {
           expect(res.body).toHaveLength(1)
         })
     })
+
+    test('Should return a filtered car', async () => {
+      const carCollection = await MongoHelper.getCollection('cars')
+      await carCollection.insertOne(makeFakeCar())
+      await carCollection.insertOne(Object.assign(makeFakeCar(), { brand: 'marca' }))
+      await request(app)
+        .get('/api/car?brand=marca')
+        .expect(200)
+        .expect(res => {
+          expect(res.body).toHaveLength(1)
+          expect(res.body[0].brand).toEqual('marca')
+        })
+    })
   })
 })
