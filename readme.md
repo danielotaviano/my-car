@@ -28,7 +28,7 @@ O My Car é uma API REST feita seguindo o Clean Architecture e os principios do 
 
 #### Principais Packages 📦
 - [ESLint](https://eslint.org/)
-- [Prettier](https://prettier.io/)
+- [Husky](https://www.npmjs.com/package/husky)
 - [Jest  🃏](https://jestjs.io/)
 
 #### Aprendizados do projeto 🔥
