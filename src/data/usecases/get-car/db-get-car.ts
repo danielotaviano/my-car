@@ -8,7 +8,7 @@ export class DbGetCar implements GetCar {
   ) {}
 
   async get(carId: string):Promise<CarModel> {
-    await this.getCarRepository.get(carId)
-    return null
+    const car = await this.getCarRepository.get(carId)
+    return car
   }
 }
