@@ -10,6 +10,7 @@ export class DbDeleteCar implements DeleteCar {
   ) {}
 
   async delete(carId: string):Promise<CarModel> {
+    await this.getCarRepository.get(carId)
     await this.deleteCarRepository.delete(carId)
     return null
   }
