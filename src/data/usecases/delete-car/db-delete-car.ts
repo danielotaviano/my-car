@@ -10,8 +10,10 @@ export class DbDeleteCar implements DeleteCar {
   ) {}
 
   async delete(carId: string):Promise<CarModel> {
-    await this.getCarRepository.get(carId)
-    await this.deleteCarRepository.delete(carId)
-    return null
+    const isExists = await this.getCarRepository.get(carId)
+    if (!isExists) return null
+
+    const car = await this.deleteCarRepository.delete(carId)
+    return car
   }
 }
