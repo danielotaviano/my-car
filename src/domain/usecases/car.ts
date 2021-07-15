@@ -31,7 +31,7 @@ export interface ListCars {
 }
 
 export interface GetCar {
-  get(carId: string, car: UpdateCarModel): Promise<CarModel>
+  get(carId: string): Promise<CarModel>
 }
 
 export interface UpdateCar {
