@@ -10,15 +10,15 @@ export type AddCarModel = {
   price: number
 }
 export type ListCarModel = {
-  brand: string
-  model: string
-  version: string
-  minYear: number
-  maxYear: number
-  mileage: number
-  gearbox: string
-  minPrice: number
-  maxPrice: number
+  brand?: string
+  model?: string
+  version?: string
+  minYear?: number
+  maxYear?: number
+  mileage?: number
+  gearbox?: string
+  minPrice?: number
+  maxPrice?: number
 }
 
 export type UpdateCarModel = Partial<AddCarModel>
