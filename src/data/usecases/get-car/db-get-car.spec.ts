@@ -71,4 +71,12 @@ describe('DbGetCar UseCase', () => {
     const car = await sut.get(carData)
     expect(car).toBeNull()
   })
+  test('should return a car on success', async () => {
+    const { sut } = makeSut()
+
+    const carData = 'any_id'
+
+    const car = await sut.get(carData)
+    expect(car).toEqual(makeFakeCarWithId())
+  })
 })
