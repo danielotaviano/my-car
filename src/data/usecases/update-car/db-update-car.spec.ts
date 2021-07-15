@@ -65,4 +65,14 @@ describe('DbUpdateCar UseCase', () => {
     await sut.update(carId, carData)
     expect(addSpy).toHaveBeenCalledWith(carId, carData)
   })
+  test('should throw if UpdateCarRepository throws', async () => {
+    const { sut, updateCarRepositoryStub } = makeSut()
+
+    const addSpy = jest.spyOn(updateCarRepositoryStub, 'update')
+    const carId = 'any_id'
+    const carData = makeFakeCar()
+
+    await sut.update(carId, carData)
+    expect(addSpy).toHaveBeenCalledWith(carId, carData)
+  })
 })
