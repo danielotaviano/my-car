@@ -2,7 +2,7 @@ import { UpdateCarRepository } from '@/data/protocols/db/update-car-repository'
 import { UpdateCar, UpdateCarModel } from '@/domain/usecases/car'
 import { MissingParamError } from '@/presentation/errors/missing-param-error'
 import { ServerError } from '@/presentation/errors/server-error'
-import { badRequest } from '@/presentation/helpers/http/http.helper'
+import { badRequest, noContent } from '@/presentation/helpers/http/http.helper'
 import { Validation } from '@/presentation/protocols/validation'
 import { UpdateCarController } from './update-car-controller'
 
@@ -90,6 +90,9 @@ describe('AddCar Controller', () => {
     const { sut, validationStub } = makeSut()
     const validateSpy = jest.spyOn(validationStub, 'validate')
     const httpRequest = {
+      params: {
+        id: 'any_id'
+      },
       body: makeFakeCar()
     }
     await sut.handle(httpRequest)
@@ -102,9 +105,25 @@ describe('AddCar Controller', () => {
       new MissingParamError('any_field')
     )
     const httpRequest = {
+      params: {
+        id: 'any_id'
+      },
       body: makeFakeCar()
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')))
+  })
+
+  test('should return 204 if valid data is provided', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      params: {
+        id: 'any_id'
+      },
+      body: makeFakeCar()
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(204)
+    expect(httpResponse).toEqual(noContent())
   })
 })
