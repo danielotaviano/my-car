@@ -59,7 +59,7 @@ type SutTypes = {
 const makeSut = (): SutTypes => {
   const updateCarRepositoryStub = makeAddUpdateCarRepository()
   const getCarRepositoryStub = makeGetCarRepository()
-  const sut = new DbUpdateCar(updateCarRepositoryStub)
+  const sut = new DbUpdateCar(updateCarRepositoryStub, getCarRepositoryStub)
 
   return {
     sut,
@@ -98,5 +98,13 @@ describe('DbUpdateCar UseCase', () => {
 
     await sut.update(carId, carData)
     expect(addSpy).toHaveBeenCalledWith(carId, carData)
+  })
+  test('should return updatedCar on success', async () => {
+    const { sut } = makeSut()
+    const carId = 'any_id'
+    const carData = makeFakeCar()
+
+    const car = await sut.update(carId, carData)
+    expect(car).toEqual(makeFakeCarWithId())
   })
 })
