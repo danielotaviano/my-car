@@ -1,5 +1,5 @@
 import { UpdateCar, UpdateCarModel } from '@/domain/usecases/car'
-import { badRequest, serverError } from '@/presentation/helpers/http/http.helper'
+import { badRequest, noContent, serverError } from '@/presentation/helpers/http/http.helper'
 import { Controller } from '@/presentation/protocols/controller'
 import { HttpRequest, HttpResponse } from '@/presentation/protocols/http'
 import { Validation } from '@/presentation/protocols/validation'
@@ -25,7 +25,7 @@ export class UpdateCarController implements Controller {
         brand, year, price, mileage, version, model, gearbox
       })
 
-      return null
+      return noContent()
     } catch (error) {
       return serverError(error)
     }
