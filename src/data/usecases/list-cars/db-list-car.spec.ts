@@ -58,4 +58,13 @@ describe('DbListCar UseCase', () => {
     await sut.list(carData)
     expect(addSpy).toHaveBeenCalledWith(carData)
   })
+  test('should throw if ListCarRepository throws', async () => {
+    const { sut, listCarRepositoryStub } = makeSut()
+
+    jest.spyOn(listCarRepositoryStub, 'list').mockRejectedValueOnce(new Error())
+    const carData = makeFakeFilters()
+
+    const promise = sut.list(carData)
+    await expect(promise).rejects.toThrow()
+  })
 })
