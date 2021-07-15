@@ -5,7 +5,7 @@ import { ListCarRepository } from '@/data/protocols/db/list-car-repository'
 import { UpdateCarRepository } from '@/data/protocols/db/update-car-repository'
 import { CarModel } from '@/domain/models/car'
 import { AddCarModel, ListCarModel, UpdateCarModel } from '@/domain/usecases/car'
-import { Collection } from 'mongodb'
+import { Collection, ObjectId } from 'mongodb'
 import { MongoHelper } from '../helpers/mongo-helper'
 
 export class CarMongoRepository
@@ -23,12 +23,12 @@ implements
 
   async delete(carId: string): Promise<void> {
     const carCollection: Collection<AddCarModel> = await MongoHelper.getCollection('cars')
-    await carCollection.deleteOne({ _id: carId })
+    await carCollection.deleteOne({ _id: new ObjectId(carId) })
   }
 
   async get(carId: string): Promise<CarModel> {
     const carCollection: Collection<AddCarModel> = await MongoHelper.getCollection('cars')
-    const result = await carCollection.findOne({ _id: carId })
+    const result = await carCollection.findOne({ _id: new ObjectId(carId) })
     return result ? MongoHelper.map(result) : null
   }
 
@@ -71,6 +71,6 @@ implements
 
   async update(carId: string, carData: UpdateCarModel): Promise<void> {
     const carCollection: Collection<AddCarModel> = await MongoHelper.getCollection('cars')
-    await carCollection.updateOne({ _id: carId }, { $set: carData })
+    await carCollection.updateOne({ _id: new ObjectId(carId) }, { $set: carData })
   }
 }

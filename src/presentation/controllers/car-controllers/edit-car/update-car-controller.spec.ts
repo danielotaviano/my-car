@@ -1,8 +1,8 @@
-import { UpdateCarRepository } from '@/data/protocols/db/update-car-repository'
 import { UpdateCar, UpdateCarModel } from '@/domain/usecases/car'
 import { MissingParamError } from '@/presentation/errors/missing-param-error'
+import { NotFoundError } from '@/presentation/errors/not-found-error'
 import { ServerError } from '@/presentation/errors/server-error'
-import { badRequest, noContent } from '@/presentation/helpers/http/http.helper'
+import { badRequest, noContent, notFound } from '@/presentation/helpers/http/http.helper'
 import { Validation } from '@/presentation/protocols/validation'
 import { UpdateCarController } from './update-car-controller'
 
@@ -18,8 +18,8 @@ const makeFakeCar = () => ({
 
 const makeUpdateCar = () => {
   class UpdateCarStub implements UpdateCar {
-    async update(carId: string, carData: UpdateCarModel): Promise<void> {
-      return new Promise(resolve => resolve())
+    async update(carId: string, carData: UpdateCarModel): Promise<boolean> {
+      return new Promise(resolve => resolve(true))
     }
   }
 
@@ -37,7 +37,7 @@ const makeValidation = (): Validation => {
 
 type SutTypes = {
   sut: UpdateCarController,
-  updateCarStub: UpdateCarRepository
+  updateCarStub: UpdateCar
   validationStub: Validation
 }
 
@@ -112,6 +112,20 @@ describe('AddCar Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')))
+  })
+  test('should return 404 if UpdateCar returns null', async () => {
+    const { sut, updateCarStub } = makeSut()
+    jest.spyOn(updateCarStub, 'update').mockReturnValueOnce(
+      null
+    )
+    const httpRequest = {
+      params: {
+        id: 'any_id'
+      },
+      body: makeFakeCar()
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(notFound(new NotFoundError('car not found')))
   })
 
   test('should return 204 if valid data is provided', async () => {

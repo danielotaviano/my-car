@@ -8,10 +8,11 @@ export class DbUpdateCar implements UpdateCar {
     private readonly getCarRepository: GetCarRepository
   ) {}
 
-  async update(carId: string, carData: UpdateCarModel):Promise<void> {
+  async update(carId: string, carData: UpdateCarModel):Promise<boolean> {
     const isExists = await this.getCarRepository.get(carId)
     if (!isExists) return null
 
     await this.updateCarRepository.update(carId, carData)
+    return true
   }
 }
