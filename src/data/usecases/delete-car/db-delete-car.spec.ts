@@ -100,4 +100,12 @@ describe('DbDeleteCar UseCase', () => {
     const promise = sut.delete(carData)
     await expect(promise).rejects.toThrow()
   })
+  test('should return a deleted car on success', async () => {
+    const { sut } = makeSut()
+
+    const carData = 'any_id'
+
+    const car = await sut.delete(carData)
+    expect(car).toEqual(makeFakeCarWithId())
+  })
 })
