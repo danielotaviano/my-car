@@ -123,7 +123,7 @@ describe('AddCar Routes', () => {
     })
   })
 
-  describe('get /car', () => {
+  describe('GET /car', () => {
     test('Should return 200 on success', async () => {
       const carCollection = await MongoHelper.getCollection('cars')
       await carCollection.insertOne(makeFakeCar())
@@ -132,6 +132,33 @@ describe('AddCar Routes', () => {
         .expect(200)
         .expect(res => {
           expect(res.body).toHaveLength(1)
+        })
+    })
+
+    test('Should return a filtered car', async () => {
+      const carCollection = await MongoHelper.getCollection('cars')
+      await carCollection.insertOne(makeFakeCar())
+      await carCollection.insertOne(Object.assign(makeFakeCar(), { brand: 'marca' }))
+      await request(app)
+        .get('/api/car?brand=marca')
+        .expect(200)
+        .expect(res => {
+          expect(res.body).toHaveLength(1)
+          expect(res.body[0].brand).toEqual('marca')
+        })
+    })
+  })
+  describe('GET /car/:id', () => {
+    test('Should return 200 on success', async () => {
+      const carCollection = await MongoHelper.getCollection('cars')
+      const result = await carCollection.insertOne(makeFakeCar())
+      const car = MongoHelper.map(result.ops[0])
+      await request(app)
+        .get(`/api/car/${car.id}`)
+        .expect(200)
+        .expect(res => {
+          expect(String(res.body.id)).toEqual(String(car.id))
+          expect(res.body).toEqual(expect.objectContaining(makeFakeCar()))
         })
     })
 
