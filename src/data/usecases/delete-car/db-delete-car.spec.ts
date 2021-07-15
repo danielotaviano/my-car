@@ -30,9 +30,8 @@ const makeGetCarRepository = (): GetCarRepository => {
 
 const makeDeleteCarRepository = (): DeleteCarRepository => {
   class DeleteCarRepositoryStub implements DeleteCarRepository {
-    async delete(id: string): Promise<CarModel> {
-      const fakeCar = makeFakeCarWithId()
-      return new Promise(resolve => resolve(fakeCar))
+    async delete(id: string): Promise<void> {
+      return new Promise(resolve => resolve())
     }
   }
   return new DeleteCarRepositoryStub()
@@ -100,12 +99,12 @@ describe('DbDeleteCar UseCase', () => {
     const promise = sut.delete(carData)
     await expect(promise).rejects.toThrow()
   })
-  test('should return a deleted car on success', async () => {
+  test('should not throw on success', async () => {
     const { sut } = makeSut()
 
     const carData = 'any_id'
 
-    const car = await sut.delete(carData)
-    expect(car).toEqual(makeFakeCarWithId())
+    const promise = sut.delete(carData)
+    await expect(promise).resolves.not.toThrow()
   })
 })

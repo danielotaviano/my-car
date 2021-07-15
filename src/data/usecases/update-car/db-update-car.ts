@@ -1,6 +1,5 @@
 import { GetCarRepository } from '@/data/protocols/db/get-car-repository'
 import { UpdateCarRepository } from '@/data/protocols/db/update-car-repository'
-import { CarModel } from '@/domain/models/car'
 import { UpdateCar, UpdateCarModel } from '@/domain/usecases/car'
 
 export class DbUpdateCar implements UpdateCar {
@@ -9,11 +8,10 @@ export class DbUpdateCar implements UpdateCar {
     private readonly getCarRepository: GetCarRepository
   ) {}
 
-  async update(carId: string, carData: UpdateCarModel):Promise<CarModel> {
+  async update(carId: string, carData: UpdateCarModel):Promise<void> {
     const isExists = await this.getCarRepository.get(carId)
     if (!isExists) return null
 
-    const car = await this.updateCarRepository.update(carId, carData)
-    return car
+    await this.updateCarRepository.update(carId, carData)
   }
 }

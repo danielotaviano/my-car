@@ -42,9 +42,8 @@ const makeGetCarRepository = (): GetCarRepository => {
 
 const makeAddUpdateCarRepository = (): UpdateCarRepository => {
   class UpdateCarRepositoryStub implements UpdateCarRepository {
-    async update(carId: string, carData: UpdateCarModel): Promise<CarModel> {
-      const fakeCar = makeFakeCarWithId()
-      return new Promise(resolve => resolve(fakeCar))
+    async update(carId: string, carData: UpdateCarModel): Promise<void> {
+      return new Promise(resolve => resolve())
     }
   }
   return new UpdateCarRepositoryStub()
@@ -117,12 +116,12 @@ describe('DbUpdateCar UseCase', () => {
     await sut.update(carId, carData)
     expect(addSpy).toHaveBeenCalledWith(carId, carData)
   })
-  test('should return updatedCar on success', async () => {
+  test('should not throw on success', async () => {
     const { sut } = makeSut()
     const carId = 'any_id'
     const carData = makeFakeCar()
 
-    const car = await sut.update(carId, carData)
-    expect(car).toEqual(makeFakeCarWithId())
+    const promise = sut.update(carId, carData)
+    await expect(promise).resolves.not.toThrow()
   })
 })

@@ -35,8 +35,8 @@ export interface GetCar {
 }
 
 export interface UpdateCar {
-  update(carId: string, carData: UpdateCarModel): Promise<CarModel>
+  update(carId: string, carData: UpdateCarModel): Promise<void>
 }
 export interface DeleteCar {
-  delete(carId: string): Promise<CarModel>
+  delete(carId: string): Promise<void>
 }
