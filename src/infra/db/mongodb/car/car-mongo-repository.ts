@@ -57,13 +57,11 @@ implements
       query.version = { $regex: filters.version, $options: 'i' }
     }
 
-    if (filters?.maxPrice && filters?.minPrice) {
-      query.price = { $gte: filters?.minPrice, $lte: filters?.maxPrice }
-    }
+    if (filters?.minPrice) query.price = { $gte: filters?.minPrice }
+    if (filters?.maxPrice) query.price = { ...query.price, $lte: filters?.maxPrice }
 
-    if (filters?.maxYear && filters?.minYear) {
-      query.year = { $gte: filters?.minYear, $lte: filters?.maxYear }
-    }
+    if (filters?.minYear) query.year = { $gte: filters?.minYear }
+    if (filters?.maxYear) query.year = { ...query.year, $lte: filters?.maxYear }
 
     const result = await carCollection.find(query).toArray()
     const mappedResult = result.map(car => MongoHelper.map(car))

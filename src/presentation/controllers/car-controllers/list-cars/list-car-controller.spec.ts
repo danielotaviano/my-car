@@ -1,20 +1,9 @@
 import { CarModel } from '@/domain/models/car'
 import { ListCarModel, ListCars } from '@/domain/usecases/car'
-import { MissingParamError } from '@/presentation/errors/missing-param-error'
 import { ServerError } from '@/presentation/errors/server-error'
-import { badRequest, ok } from '@/presentation/helpers/http/http.helper'
+import { ok } from '@/presentation/helpers/http/http.helper'
 import { Validation } from '@/presentation/protocols/validation'
 import { ListCarController } from './list-car-controller'
-
-const makeFakeCar = () => ({
-  brand: 'any_brand',
-  model: 'any_model',
-  version: 'any_version',
-  year: 2000,
-  mileage: 10000,
-  gearbox: 'valid_gear_box',
-  price: 50000
-})
 
 const makeFakeCarWithId = () => ({
   id: 'any_id',
@@ -56,7 +45,7 @@ type SutTypes = {
 const makeSut = (): SutTypes => {
   const listCarStub = makeListCar()
   const validationStub = makeValidation()
-  const sut = new ListCarController(listCarStub, validationStub)
+  const sut = new ListCarController(listCarStub)
 
   return {
     sut,
@@ -94,28 +83,6 @@ describe('AddCar Controller', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError(null))
-  })
-
-  test('should call Validation with correct values', async () => {
-    const { sut, validationStub } = makeSut()
-    const validateSpy = jest.spyOn(validationStub, 'validate')
-    const httpRequest = {
-      query: makeFakeCar()
-    }
-    await sut.handle(httpRequest)
-    expect(validateSpy).toBeCalledWith(makeFakeCar())
-  })
-
-  test('should return 400 if Validation returns an error', async () => {
-    const { sut, validationStub } = makeSut()
-    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(
-      new MissingParamError('any_field')
-    )
-    const httpRequest = {
-      query: makeFakeCar()
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')))
   })
 
   test('should return 200 if valid data is provided', async () => {
