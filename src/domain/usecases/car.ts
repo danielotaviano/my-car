@@ -20,7 +20,6 @@ export type ListCarModel = {
   minPrice?: number
   maxPrice?: number
 }
-
 export type UpdateCarModel = Partial<AddCarModel>
 
 export interface AddCar {
@@ -36,7 +35,7 @@ export interface GetCar {
 }
 
 export interface UpdateCar {
-  update(carId: string): Promise<CarModel>
+  update(carId: string, carData: UpdateCarModel): Promise<CarModel>
 }
 export interface DeleteCar {
   delete(carId: string): Promise<CarModel>
