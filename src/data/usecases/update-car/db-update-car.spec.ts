@@ -1,3 +1,4 @@
+import { GetCarRepository } from '@/data/protocols/db/get-car-repository'
 import { UpdateCarRepository } from '@/data/protocols/db/update-car-repository'
 import { CarModel } from '@/domain/models/car'
 import { UpdateCarModel } from '@/domain/usecases/car'
@@ -29,6 +30,16 @@ const makeFakeCar = () => {
   return fakeCar
 }
 
+const makeGetCarRepository = (): GetCarRepository => {
+  class GetCarRepositoryStub implements GetCarRepository {
+    async get(id: string): Promise<CarModel> {
+      const fakeCar = makeFakeCarWithId()
+      return new Promise(resolve => resolve(fakeCar))
+    }
+  }
+  return new GetCarRepositoryStub()
+}
+
 const makeAddUpdateCarRepository = (): UpdateCarRepository => {
   class UpdateCarRepositoryStub implements UpdateCarRepository {
     async update(carId: string, carData: UpdateCarModel): Promise<CarModel> {
@@ -42,19 +53,32 @@ const makeAddUpdateCarRepository = (): UpdateCarRepository => {
 type SutTypes = {
   sut: DbUpdateCar
   updateCarRepositoryStub: UpdateCarRepository
+  getCarRepositoryStub: GetCarRepository
 }
 
 const makeSut = (): SutTypes => {
   const updateCarRepositoryStub = makeAddUpdateCarRepository()
+  const getCarRepositoryStub = makeGetCarRepository()
   const sut = new DbUpdateCar(updateCarRepositoryStub)
 
   return {
     sut,
-    updateCarRepositoryStub
+    updateCarRepositoryStub,
+    getCarRepositoryStub
   }
 }
 
 describe('DbUpdateCar UseCase', () => {
+  test('should return null if GetCarRepository returns null', async () => {
+    const { sut, getCarRepositoryStub } = makeSut()
+
+    jest.spyOn(getCarRepositoryStub, 'get').mockReturnValueOnce(null)
+    const carId = 'any_id'
+    const carData = makeFakeCar()
+
+    const cars = await sut.update(carId, carData)
+    expect(cars).toBeNull()
+  })
   test('should call UpdateCarRepository with correct values', async () => {
     const { sut, updateCarRepositoryStub } = makeSut()
 
