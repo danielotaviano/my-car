@@ -18,6 +18,7 @@
     ],
     "rules": {
         "space-before-function-paren": "off",
-        "no-useless-constructor": "off"
+        "no-useless-constructor": "off",
+        "valid-typeof": "off"
     }
 }
