@@ -79,6 +79,24 @@ describe('DbUpdateCar UseCase', () => {
     const cars = await sut.update(carId, carData)
     expect(cars).toBeNull()
   })
+  test('should call GetCarRepository with correct values', async () => {
+    const { sut, getCarRepositoryStub } = makeSut()
+
+    const getSpy = jest.spyOn(getCarRepositoryStub, 'get')
+    const carId = 'any_id'
+    const carData = makeFakeCar()
+    await sut.update(carId, carData)
+    expect(getSpy).toBeCalledWith(carId)
+  })
+  test('should throw if GetCarRepository throws', async () => {
+    const { sut, getCarRepositoryStub } = makeSut()
+
+    jest.spyOn(getCarRepositoryStub, 'get').mockRejectedValueOnce(new Error())
+    const carId = 'any_id'
+    const carData = makeFakeCar()
+    const promise = sut.update(carId, carData)
+    await expect(promise).rejects.toThrow()
+  })
   test('should call UpdateCarRepository with correct values', async () => {
     const { sut, updateCarRepositoryStub } = makeSut()
 
