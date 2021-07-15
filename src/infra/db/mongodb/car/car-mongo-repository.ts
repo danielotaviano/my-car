@@ -32,8 +32,41 @@ implements
     return result ? MongoHelper.map(result) : null
   }
 
-  async list(filters: ListCarModel): Promise<CarModel[]> {
-    return null
+  async list(filters?: ListCarModel): Promise<CarModel[]> {
+    const carCollection: Collection<CarModel> = await MongoHelper.getCollection('cars')
+
+    const query: any = {}
+
+    if (filters?.brand) {
+      query.brand = { $regex: filters.brand, $options: 'i' }
+    }
+
+    if (filters?.gearbox) {
+      query.gearbox = { $regex: filters.gearbox, $options: 'i' }
+    }
+
+    if (filters?.mileage) {
+      query.mileage = filters?.mileage
+    }
+
+    if (filters?.model) {
+      query.model = { $regex: filters.model, $options: 'i' }
+    }
+
+    if (filters?.version) {
+      query.version = { $regex: filters.version, $options: 'i' }
+    }
+
+    if (filters?.maxPrice && filters?.minPrice) {
+      query.price = { $gte: filters?.minPrice, $lte: filters?.maxPrice }
+    }
+
+    if (filters?.maxYear && filters?.minYear) {
+      query.year = { $gte: filters?.minYear, $lte: filters?.maxYear }
+    }
+
+    const result = await carCollection.find(query).toArray()
+    return result
   }
 
   async update(carId: string, carData: UpdateCarModel): Promise<void> {

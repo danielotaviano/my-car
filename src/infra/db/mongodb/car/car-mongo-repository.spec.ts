@@ -6,7 +6,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server'
 import { MongoHelper } from '../helpers/mongo-helper'
 import { CarMongoRepository } from './car-mongo-repository'
 
-let carCollection: Collection<CarModel>
+let carCollection: Collection<Partial<CarModel>>
 
 const makeFakeCar = () => {
   const fakeCar = {
@@ -107,6 +107,214 @@ describe('Car Mongo Repository', () => {
       const resultBySutNext = await sut.get(car.id)
 
       expect(resultBySutNext).toBeFalsy()
+    })
+  })
+
+  describe('list()', () => {
+    test('should return a list of cars', async () => {
+      const sut = makeSut()
+      const car1 = {
+        brand: 'any_brand',
+        model: 'any_model',
+        version: 'any_version',
+        year: 2000,
+        mileage: 10000,
+        gearbox: 'valid_gear_box',
+        price: 50000
+      }
+      const car2 = {
+        brand: 'any_brand2',
+        model: 'any_model2',
+        version: 'any_version2',
+        year: 20002,
+        mileage: 100002,
+        gearbox: 'valid_gear_box2',
+        price: 500002
+      }
+      await carCollection.insertMany([car1, car2])
+
+      const cars = await sut.list({})
+      expect(cars).toEqual(expect.arrayContaining([car1, car2]))
+    })
+    test('[brand] should return a list of cars that has filter', async () => {
+      const sut = makeSut()
+      const car1 = {
+        brand: 'any_brand',
+        model: 'any_model',
+        version: 'any_version',
+        year: 2000,
+        mileage: 10000,
+        gearbox: 'valid_gear_box',
+        price: 50000
+      }
+      const car2 = {
+        brand: 'any_brand2',
+        model: 'any_model2',
+        version: 'any_version2',
+        year: 20002,
+        mileage: 100002,
+        gearbox: 'valid_gear_box2',
+        price: 500002
+      }
+      await carCollection.insertMany([car1, car2])
+
+      const cars = await sut.list({ brand: '2' })
+      expect(cars).toEqual(expect.arrayContaining([car2]))
+    })
+
+    test('[model] should return a list of cars that has filter', async () => {
+      const sut = makeSut()
+      const car1 = {
+        brand: 'any_brand',
+        model: 'any_model',
+        version: 'any_version',
+        year: 2000,
+        mileage: 10000,
+        gearbox: 'valid_gear_box',
+        price: 50000
+      }
+      const car2 = {
+        brand: 'any_brand2',
+        model: 'any_model2',
+        version: 'any_version2',
+        year: 20002,
+        mileage: 100002,
+        gearbox: 'valid_gear_box2',
+        price: 500002
+      }
+      await carCollection.insertMany([car1, car2])
+
+      const cars = await sut.list({ model: '2' })
+      expect(cars).toEqual(expect.arrayContaining([car2]))
+    })
+    test('[version] should return a list of cars that has filter', async () => {
+      const sut = makeSut()
+      const car1 = {
+        brand: 'any_brand',
+        model: 'any_model',
+        version: 'any_version123',
+        year: 2000,
+        mileage: 10000,
+        gearbox: 'valid_gear_box',
+        price: 50000
+      }
+      const car2 = {
+        brand: 'any_brand2',
+        model: 'any_model2',
+        version: 'any_version2',
+        year: 20002,
+        mileage: 100002,
+        gearbox: 'valid_gear_box2',
+        price: 500002
+      }
+      await carCollection.insertMany([car1, car2])
+
+      const cars = await sut.list({ version: '123' })
+      expect(cars).toEqual(expect.arrayContaining([car1]))
+    })
+    test('[year] should return a list of cars that has filter', async () => {
+      const sut = makeSut()
+      const car1 = {
+        brand: 'any_brand',
+        model: 'any_model',
+        version: 'any_version123',
+        year: 2000,
+        mileage: 10000,
+        gearbox: 'valid_gear_box',
+        price: 50000
+      }
+      const car2 = {
+        brand: 'any_brand2',
+        model: 'any_model2',
+        version: 'any_version2',
+        year: 20002,
+        mileage: 100002,
+        gearbox: 'valid_gear_box2',
+        price: 500002
+      }
+      await carCollection.insertMany([car1, car2])
+
+      const car1Result = await sut.list({ minYear: 100, maxYear: 2005 })
+      const car2Result = await sut.list({ minYear: 2005, maxYear: 30000 })
+      expect(car1Result).toEqual(expect.arrayContaining([car1]))
+      expect(car2Result).toEqual(expect.arrayContaining([car2]))
+    })
+    test('[mileage] should return a list of cars that has filter', async () => {
+      const sut = makeSut()
+      const car1 = {
+        brand: 'any_brand',
+        model: 'any_model',
+        version: 'any_version123',
+        year: 2000,
+        mileage: 10000,
+        gearbox: 'valid_gear_box',
+        price: 50000
+      }
+      const car2 = {
+        brand: 'any_brand2',
+        model: 'any_model2',
+        version: 'any_version2',
+        year: 20002,
+        mileage: 100002,
+        gearbox: 'valid_gear_box2',
+        price: 500002
+      }
+      await carCollection.insertMany([car1, car2])
+
+      const car1Result = await sut.list({ mileage: 100002 })
+      expect(car1Result).toEqual(expect.arrayContaining([car2]))
+    })
+    test('[gearbox] should return a list of cars that has filter', async () => {
+      const sut = makeSut()
+      const car1 = {
+        brand: 'any_brand',
+        model: 'any_model',
+        version: 'any_version123',
+        year: 2000,
+        mileage: 10000,
+        gearbox: 'valid_gear_box',
+        price: 50000
+      }
+      const car2 = {
+        brand: 'any_brand2',
+        model: 'any_model2',
+        version: 'any_version2',
+        year: 20002,
+        mileage: 100002,
+        gearbox: 'valid_gear_box2',
+        price: 500002
+      }
+      await carCollection.insertMany([car1, car2])
+
+      const car1Result = await sut.list({ gearbox: '2' })
+      expect(car1Result).toEqual(expect.arrayContaining([car2]))
+    })
+    test('[price] should return a list of cars that has filter', async () => {
+      const sut = makeSut()
+      const car1 = {
+        brand: 'any_brand',
+        model: 'any_model',
+        version: 'any_version123',
+        year: 2000,
+        mileage: 10000,
+        gearbox: 'valid_gear_box',
+        price: 25000
+      }
+      const car2 = {
+        brand: 'any_brand2',
+        model: 'any_model2',
+        version: 'any_version2',
+        year: 20002,
+        mileage: 100002,
+        gearbox: 'valid_gear_box2',
+        price: 50000
+      }
+      await carCollection.insertMany([car1, car2])
+
+      const car1Result = await sut.list({ minPrice: 10000, maxPrice: 30000 })
+      const car2Result = await sut.list({ minPrice: 30000, maxPrice: 60000 })
+      expect(car2Result).toEqual(expect.arrayContaining([car2]))
+      expect(car1Result).toEqual(expect.arrayContaining([car1]))
     })
   })
 })
