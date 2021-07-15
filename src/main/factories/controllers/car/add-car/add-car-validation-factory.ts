@@ -1,4 +1,5 @@
 import { Validation } from '@/presentation/protocols/validation'
+import { InvalidFieldValidation } from '@/validation/validators/invalid-field-validation'
 import { RequiredFieldValidation } from '@/validation/validators/required-field-validation'
 import { TypeFieldValidation } from '@/validation/validators/type-field-validation'
 import { ValidationComposite } from '@/validation/validators/validation-composite'
@@ -19,6 +20,8 @@ export const makeAddCarValidation = (): ValidationComposite => {
     validations.push(new RequiredFieldValidation(field))
     validations.push(new TypeFieldValidation(field, types))
   }
+
+  validations.push(new InvalidFieldValidation(fields))
 
   return new ValidationComposite(validations)
 }

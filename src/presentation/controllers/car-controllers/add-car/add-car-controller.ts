@@ -15,11 +15,7 @@ export class AddCarController implements Controller {
       const error = this.validation.validate(httpRequest.body)
       if (error) return badRequest(error)
 
-      const { brand, gearbox, mileage, model, price, version, year } = httpRequest.body
-
-      const savedCar = await this.addCar.add({
-        brand, gearbox, mileage, model, price, version, year
-      })
+      const savedCar = await this.addCar.add(httpRequest.body)
       return ok(savedCar)
     } catch (error) {
       return serverError(error)
