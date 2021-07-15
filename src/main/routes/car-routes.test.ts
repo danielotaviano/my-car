@@ -122,4 +122,17 @@ describe('AddCar Routes', () => {
         .expect(400)
     })
   })
+
+  describe('get /car', () => {
+    test('Should return 200 on success', async () => {
+      const carCollection = await MongoHelper.getCollection('cars')
+      await carCollection.insertOne(makeFakeCar())
+      await request(app)
+        .get('/api/car')
+        .expect(200)
+        .expect(res => {
+          expect(res.body).toHaveLength(1)
+        })
+    })
+  })
 })

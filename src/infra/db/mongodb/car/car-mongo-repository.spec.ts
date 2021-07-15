@@ -113,7 +113,7 @@ describe('Car Mongo Repository', () => {
   describe('list()', () => {
     test('should return a list of cars', async () => {
       const sut = makeSut()
-      const car1 = {
+      const makeFakeCar1 = () => ({
         brand: 'any_brand',
         model: 'any_model',
         version: 'any_version',
@@ -121,8 +121,8 @@ describe('Car Mongo Repository', () => {
         mileage: 10000,
         gearbox: 'valid_gear_box',
         price: 50000
-      }
-      const car2 = {
+      })
+      const makeFakeCar2 = () => ({
         brand: 'any_brand2',
         model: 'any_model2',
         version: 'any_version2',
@@ -130,15 +130,17 @@ describe('Car Mongo Repository', () => {
         mileage: 100002,
         gearbox: 'valid_gear_box2',
         price: 500002
-      }
-      await carCollection.insertMany([car1, car2])
+      })
+      await carCollection.insertMany([makeFakeCar2(), makeFakeCar1()])
 
       const cars = await sut.list({})
-      expect(cars).toEqual(expect.arrayContaining([car1, car2]))
+      expect(cars).toEqual(expect.arrayContaining(
+        [expect.objectContaining(makeFakeCar1()), expect.objectContaining(makeFakeCar2())]
+      ))
     })
     test('[brand] should return a list of cars that has filter', async () => {
       const sut = makeSut()
-      const car1 = {
+      const makeFakeCar1 = () => ({
         brand: 'any_brand',
         model: 'any_model',
         version: 'any_version',
@@ -146,8 +148,8 @@ describe('Car Mongo Repository', () => {
         mileage: 10000,
         gearbox: 'valid_gear_box',
         price: 50000
-      }
-      const car2 = {
+      })
+      const makeFakeCar2 = () => ({
         brand: 'any_brand2',
         model: 'any_model2',
         version: 'any_version2',
@@ -155,16 +157,16 @@ describe('Car Mongo Repository', () => {
         mileage: 100002,
         gearbox: 'valid_gear_box2',
         price: 500002
-      }
-      await carCollection.insertMany([car1, car2])
+      })
+      await carCollection.insertMany([makeFakeCar2(), makeFakeCar1()])
 
       const cars = await sut.list({ brand: '2' })
-      expect(cars).toEqual(expect.arrayContaining([car2]))
+      expect(cars).toEqual(expect.arrayContaining([expect.objectContaining(makeFakeCar2())]))
     })
 
     test('[model] should return a list of cars that has filter', async () => {
       const sut = makeSut()
-      const car1 = {
+      const makeFakeCar1 = () => ({
         brand: 'any_brand',
         model: 'any_model',
         version: 'any_version',
@@ -172,8 +174,8 @@ describe('Car Mongo Repository', () => {
         mileage: 10000,
         gearbox: 'valid_gear_box',
         price: 50000
-      }
-      const car2 = {
+      })
+      const makeFakeCar2 = () => ({
         brand: 'any_brand2',
         model: 'any_model2',
         version: 'any_version2',
@@ -181,15 +183,15 @@ describe('Car Mongo Repository', () => {
         mileage: 100002,
         gearbox: 'valid_gear_box2',
         price: 500002
-      }
-      await carCollection.insertMany([car1, car2])
+      })
+      await carCollection.insertMany([makeFakeCar2(), makeFakeCar1()])
 
       const cars = await sut.list({ model: '2' })
-      expect(cars).toEqual(expect.arrayContaining([car2]))
+      expect(cars).toEqual(expect.arrayContaining([expect.objectContaining(makeFakeCar2())]))
     })
     test('[version] should return a list of cars that has filter', async () => {
       const sut = makeSut()
-      const car1 = {
+      const makeFakeCar1 = () => ({
         brand: 'any_brand',
         model: 'any_model',
         version: 'any_version123',
@@ -197,8 +199,8 @@ describe('Car Mongo Repository', () => {
         mileage: 10000,
         gearbox: 'valid_gear_box',
         price: 50000
-      }
-      const car2 = {
+      })
+      const makeFakeCar2 = () => ({
         brand: 'any_brand2',
         model: 'any_model2',
         version: 'any_version2',
@@ -206,24 +208,24 @@ describe('Car Mongo Repository', () => {
         mileage: 100002,
         gearbox: 'valid_gear_box2',
         price: 500002
-      }
-      await carCollection.insertMany([car1, car2])
+      })
+      await carCollection.insertMany([makeFakeCar2(), makeFakeCar1()])
 
       const cars = await sut.list({ version: '123' })
-      expect(cars).toEqual(expect.arrayContaining([car1]))
+      expect(cars).toEqual(expect.arrayContaining([expect.objectContaining(makeFakeCar1())]))
     })
     test('[year] should return a list of cars that has filter', async () => {
       const sut = makeSut()
-      const car1 = {
+      const makeFakeCar1 = () => ({
         brand: 'any_brand',
         model: 'any_model',
-        version: 'any_version123',
+        version: 'any_version',
         year: 2000,
         mileage: 10000,
         gearbox: 'valid_gear_box',
         price: 50000
-      }
-      const car2 = {
+      })
+      const makeFakeCar2 = () => ({
         brand: 'any_brand2',
         model: 'any_model2',
         version: 'any_version2',
@@ -231,26 +233,26 @@ describe('Car Mongo Repository', () => {
         mileage: 100002,
         gearbox: 'valid_gear_box2',
         price: 500002
-      }
-      await carCollection.insertMany([car1, car2])
+      })
+      await carCollection.insertMany([makeFakeCar2(), makeFakeCar1()])
 
       const car1Result = await sut.list({ minYear: 100, maxYear: 2005 })
       const car2Result = await sut.list({ minYear: 2005, maxYear: 30000 })
-      expect(car1Result).toEqual(expect.arrayContaining([car1]))
-      expect(car2Result).toEqual(expect.arrayContaining([car2]))
+      expect(car1Result).toEqual(expect.arrayContaining([expect.objectContaining(makeFakeCar1())]))
+      expect(car2Result).toEqual(expect.arrayContaining([expect.objectContaining(makeFakeCar2())]))
     })
     test('[mileage] should return a list of cars that has filter', async () => {
       const sut = makeSut()
-      const car1 = {
+      const makeFakeCar1 = () => ({
         brand: 'any_brand',
         model: 'any_model',
-        version: 'any_version123',
+        version: 'any_version',
         year: 2000,
         mileage: 10000,
         gearbox: 'valid_gear_box',
         price: 50000
-      }
-      const car2 = {
+      })
+      const makeFakeCar2 = () => ({
         brand: 'any_brand2',
         model: 'any_model2',
         version: 'any_version2',
@@ -258,24 +260,24 @@ describe('Car Mongo Repository', () => {
         mileage: 100002,
         gearbox: 'valid_gear_box2',
         price: 500002
-      }
-      await carCollection.insertMany([car1, car2])
+      })
+      await carCollection.insertMany([makeFakeCar2(), makeFakeCar1()])
 
       const car1Result = await sut.list({ mileage: 100002 })
-      expect(car1Result).toEqual(expect.arrayContaining([car2]))
+      expect(car1Result).toEqual(expect.arrayContaining([expect.objectContaining(makeFakeCar2())]))
     })
     test('[gearbox] should return a list of cars that has filter', async () => {
       const sut = makeSut()
-      const car1 = {
+      const makeFakeCar1 = () => ({
         brand: 'any_brand',
         model: 'any_model',
-        version: 'any_version123',
+        version: 'any_version',
         year: 2000,
         mileage: 10000,
         gearbox: 'valid_gear_box',
         price: 50000
-      }
-      const car2 = {
+      })
+      const makeFakeCar2 = () => ({
         brand: 'any_brand2',
         model: 'any_model2',
         version: 'any_version2',
@@ -283,24 +285,24 @@ describe('Car Mongo Repository', () => {
         mileage: 100002,
         gearbox: 'valid_gear_box2',
         price: 500002
-      }
-      await carCollection.insertMany([car1, car2])
+      })
+      await carCollection.insertMany([makeFakeCar2(), makeFakeCar1()])
 
       const car1Result = await sut.list({ gearbox: '2' })
-      expect(car1Result).toEqual(expect.arrayContaining([car2]))
+      expect(car1Result).toEqual(expect.arrayContaining([expect.objectContaining(makeFakeCar2())]))
     })
     test('[price] should return a list of cars that has filter', async () => {
       const sut = makeSut()
-      const car1 = {
+      const makeFakeCar1 = () => ({
         brand: 'any_brand',
         model: 'any_model',
-        version: 'any_version123',
+        version: 'any_version',
         year: 2000,
         mileage: 10000,
         gearbox: 'valid_gear_box',
         price: 25000
-      }
-      const car2 = {
+      })
+      const makeFakeCar2 = () => ({
         brand: 'any_brand2',
         model: 'any_model2',
         version: 'any_version2',
@@ -308,13 +310,13 @@ describe('Car Mongo Repository', () => {
         mileage: 100002,
         gearbox: 'valid_gear_box2',
         price: 50000
-      }
-      await carCollection.insertMany([car1, car2])
+      })
+      await carCollection.insertMany([makeFakeCar2(), makeFakeCar1()])
 
       const car1Result = await sut.list({ minPrice: 10000, maxPrice: 30000 })
       const car2Result = await sut.list({ minPrice: 30000, maxPrice: 60000 })
-      expect(car2Result).toEqual(expect.arrayContaining([car2]))
-      expect(car1Result).toEqual(expect.arrayContaining([car1]))
+      expect(car2Result).toEqual(expect.arrayContaining([expect.objectContaining(makeFakeCar2())]))
+      expect(car1Result).toEqual(expect.arrayContaining([expect.objectContaining(makeFakeCar1())]))
     })
   })
 })

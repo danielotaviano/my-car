@@ -66,7 +66,8 @@ implements
     }
 
     const result = await carCollection.find(query).toArray()
-    return result
+    const mappedResult = result.map(car => MongoHelper.map(car))
+    return mappedResult
   }
 
   async update(carId: string, carData: UpdateCarModel): Promise<void> {
