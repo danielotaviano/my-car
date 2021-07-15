@@ -12,12 +12,14 @@ export class AddCarController implements Controller {
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const carData = httpRequest.body
-
-      const error = this.validation.validate(carData)
+      const error = this.validation.validate(httpRequest.body)
       if (error) return badRequest(error)
 
-      const savedCar = await this.addCar.add(carData)
+      const { brand, gearbox, mileage, model, price, version, year } = httpRequest.body
+
+      const savedCar = await this.addCar.add({
+        brand, gearbox, mileage, model, price, version, year
+      })
       return ok(savedCar)
     } catch (error) {
       return serverError(error)
